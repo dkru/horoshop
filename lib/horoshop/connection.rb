@@ -6,8 +6,8 @@ class Horoshop
   module Connection
     ERROR = { status: 'HTTP_ERROR', message: 'UNKNOWN SERVER ERROR' }.freeze
 
-    def post(instance:, url:, body:)
-      connection(instance).post(url, body)
+    def post(horoshop:, url:, body:)
+      connection(horoshop).post(url, body)
     rescue Faraday::Error => e
       error_status = e.response[:status]
       error_body = e.response&.dig(:body)
@@ -18,8 +18,8 @@ class Horoshop
       end
     end
 
-    def connection(instance)
-      @connection ||= Faraday.new(url: instance.url) do |faraday|
+    def connection(horoshop)
+      @connection ||= Faraday.new(url: horoshop.url) do |faraday|
         faraday.request :json
         faraday.response :raise_error
         faraday.response :json

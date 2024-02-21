@@ -27,7 +27,7 @@ describe Horoshop::Connection do
       end
 
       it 'returns a success response' do
-        response = subject.post(instance: subject, url: url, body: body)
+        response = subject.post(horoshop: subject, url: url, body: body)
         expect(JSON.parse(response.body)).to include('status' => 'OK', 'response' => { 'token' => 'some_token' })
       end
     end
@@ -39,7 +39,7 @@ describe Horoshop::Connection do
       end
 
       it 'returns a server error message' do
-        response = subject.post(instance: subject, url: url, body: body)
+        response = subject.post(horoshop: subject, url: url, body: body)
         expect(response).to eq(Horoshop::Connection::ERROR)
       end
     end

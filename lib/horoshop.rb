@@ -4,11 +4,11 @@ require_relative 'horoshop/authorization'
 
 # Base class used to store data about authentication
 class Horoshop
-  attr_accessor :url, :username, :password, :token, :expiration_timestamp
+  attr_accessor :url, :login, :password, :token, :expiration_timestamp
 
-  def initialize(url:, username:, password:)
+  def initialize(url:, login:, password:)
     @url = url
-    @username = username
+    @login = login
     @password = password
     @token = nil
     @expiration_timestamp = nil

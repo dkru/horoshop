@@ -9,26 +9,26 @@ class Horoshop
     AUTH_URL = '/api/auth/'
     EXPIRATION_TIME = 600
 
-    def initialize(instance)
-      @instance = instance
+    def initialize(horoshop)
+      @horoshop = horoshop
     end
 
     def authorize
-      response = post(instance: instance, url: AUTH_URL, body: body)
+      response = post(horoshop: horoshop, url: AUTH_URL, body: body)
       return response.body unless response.body['status'] == 'OK'
 
-      instance.token = response.body['response']['token']
-      instance.expiration_timestamp = Time.now + EXPIRATION_TIME
+      horoshop.token = response.body['response']['token']
+      horoshop.expiration_timestamp = Time.now + EXPIRATION_TIME
       response.body
     end
 
 
     private
 
-    attr_reader :instance
+    attr_reader :horoshop
 
     def body
-      { login: instance.username, password: instance.password }
+      { login: horoshop.login, password: horoshop.password }
     end
   end
 end
