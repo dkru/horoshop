@@ -14,11 +14,12 @@ class Horoshop
     end
 
     def authorize
-      responce = post(instance: instance, url: AUTH_URL, body: body)
-      return responce.body unless responce.body['status'] == 'OK'
+      response = post(instance: instance, url: AUTH_URL, body: body)
+      return response.body unless response.body['status'] == 'OK'
 
-      instance.token = responce.body['response']['token']
+      instance.token = response.body['response']['token']
       instance.expiration_timestamp = Time.now + EXPIRATION_TIME
+      response.body
     end
 
 
