@@ -31,7 +31,7 @@ describe Horoshop::Authorization do
       end
 
       it { expect(instance).to receive(:token=).with('123qwe4') }
-      it { expect(instance).to receive(:expiration_timestamp=).with(Time.now + 600) }
+      it { expect(instance).to receive(:expiration_timestamp=).with(Time.parse('2024-02-21 12:42:59 +0200') + 600) }
     end
 
     context 'when authorization fails' do
