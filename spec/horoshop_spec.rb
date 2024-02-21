@@ -1,23 +1,20 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'faraday'
 
 describe Horoshop do
   let(:url) { 'http://api.horosop.com' }
   let(:username) { 'valid_user' }
   let(:password) { 'valid_password' }
-  let(:invalid_username) { 'invalid_user' }
-  let(:invalid_password) { 'invalid_password' }
+  let(:params) do
+    { url: url, username: username, password: password }
+  end
+  subject(:horoshop) { described_class.new(params) }
 
   describe '#initialize' do
-    subject { described_class.new(params) }
-
     context 'when all parameters passed' do
-      let(:params) do
-        { url: url, username: username, password: password }
-      end
-
-      it { is_expected.to be_a Horoshop }
+      it { is_expected { subject }.to be_a Horoshop }
     end
 
     context 'when parameters' do
@@ -27,48 +24,71 @@ describe Horoshop do
     end
   end
 
-  describe '#setup_connection and #authorize' do
-    context 'with valid params' do
+  describe '#token_valid?' do
+    context 'when token is present and not expired' do
       before do
-        stub_request(:post, url)
-          .with(body: { username: username, password: password }.to_json)
-          .to_return(status: 200, body: { status: 'OK', token: 'valid_token' }.to_json)
+        horoshop.token = 'some_token'
+        horoshop.expiration_timestamp = Time.now - 400
       end
 
-      it 'authorize and set a token' do
-        horoshop = Horoshop.new(url: url, username: username, password: password)
-        horoshop.setup_connection
-        expect(horoshop.send(:token)) == ('valid_token')
+      it 'returns true' do
+        expect(horoshop.token_valid?).to be true
       end
     end
 
-    context 'with invalid params' do
+    context 'when token is present but expired' do
       before do
-        stub_request(:post, url)
-          .with(body: { username: invalid_username, password: invalid_password })
-          .to_return(status: 401, body: { status: 'ERROR', message: 'Not authorized' }.to_json)
+        horoshop.token = 'some_token'
+        horoshop.expiration_timestamp = Time.now + 700
       end
 
-      it 'does not authorize and does not set a token' do
-        horoshop = Horoshop.new(url: url, username: invalid_username, password: invalid_password)
-        expect { horoshop.setup_connection }.to_not raise_error
-        expect(horoshop.send(:token)).to be_nil
+      it 'returns false' do
+        expect(horoshop.token_valid?).to be false
+      end
+    end
+
+    context 'when token is nil' do
+      before do
+        subject
+        horoshop.token = nil
+      end
+
+      it 'returns false' do
+        expect(horoshop.token_valid?).to be false
       end
     end
   end
 
-  describe 'error handling' do
-    context 'when server returns 500 Internal Server Error' do
+  describe '#refresh_token!' do
+    let(:authorization_instance) { instance_double(Horoshop::Authorization) }
+
+    before do
+      allow(Horoshop::Authorization).to receive(:new).with(horoshop).and_return(authorization_instance)
+      allow(authorization_instance).to receive(:authorize)
+    end
+
+    it 'calls authorize on a new Horoshop::Authorization instance' do
+      horoshop.refresh_token!
+      expect(Horoshop::Authorization).to have_received(:new).with(horoshop)
+      expect(authorization_instance).to have_received(:authorize)
+    end
+
+    context 'when authorize updates the token and expiration_timestamp' do
+      let(:new_token) { 'new_token' }
+      let(:new_expiration_timestamp) { Time.now + 600 }
+
       before do
-        stub_request(:post, url)
-          .with(body: { username: username, password: password })
-          .to_return(status: 500, body: { status: 'ERROR', message: 'Internal Server Error' }.to_json)
+        allow(authorization_instance).to receive(:authorize) do
+          horoshop.token = new_token
+          horoshop.expiration_timestamp = new_expiration_timestamp
+        end
       end
 
-      it 'captures the error and does not set a token' do
-        horoshop = Horoshop.new(url: url, username: username, password: password)
-        expect { horoshop.setup_connection }.to_not raise_error
-        expect(horoshop.send(:token)).to be_nil
+      it 'updates the token and expiration_timestamp on the Horoshop instance' do
+        expect { horoshop.refresh_token! }.to change(horoshop, :token).from(nil)
+                                                                      .to(new_token)
+                                                                      .and change(horoshop, :expiration_timestamp)
+                                                                      .from(nil).to(new_expiration_timestamp)
       end
     end
   end
