@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe Horoshop::Connection do
+  subject { object.new('http://api.horosop.com') }
+
   let(:object) do
     Class.new do
       include Horoshop::Connection
@@ -13,8 +15,6 @@ describe Horoshop::Connection do
       end
     end
   end
-
-  subject(:connection_instance) { object.new('http://api.horosop.com') }
 
   describe '#post' do
     let(:url) { '/api/test' }
@@ -27,7 +27,7 @@ describe Horoshop::Connection do
       end
 
       it 'returns a success response' do
-        response = connection_instance.post(instance: connection_instance, url: url, body: body)
+        response = subject.post(instance: subject, url: url, body: body)
         expect(JSON.parse(response.body)).to include('status' => 'OK', 'response' => { 'token' => 'some_token' })
       end
     end
@@ -39,7 +39,7 @@ describe Horoshop::Connection do
       end
 
       it 'returns a server error message' do
-        response = connection_instance.post(instance: connection_instance, url: url, body: body)
+        response = subject.post(instance: subject, url: url, body: body)
         expect(response).to eq(Horoshop::Connection::ERROR)
       end
     end

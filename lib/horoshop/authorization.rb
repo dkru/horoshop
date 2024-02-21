@@ -14,18 +14,20 @@ class Horoshop
     end
 
     def authorize
-      responce = post(instance: @instance, url: AUTH_URL, body: body)
+      responce = post(instance: instance, url: AUTH_URL, body: body)
       return responce.body unless responce.body['status'] == 'OK'
 
-      @instance.token = responce.body['response']['token']
-      @instance.expiration_timestamp = Time.now + EXPIRATION_TIME
+      instance.token = responce.body['response']['token']
+      instance.expiration_timestamp = Time.now + EXPIRATION_TIME
     end
 
 
     private
 
+    attr_reader :instance
+
     def body
-      { login: @instance.username, password: @instance.password }
+      { login: instance.username, password: instance.password }
     end
   end
 end
