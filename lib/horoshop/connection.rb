@@ -4,18 +4,12 @@ require 'faraday'
 class Horoshop
   # Module for check connection
   module Connection
-    ERROR = { status: 'HTTP_ERROR', message: 'UNKNOWN SERVER ERROR' }.freeze
+    ERROR = { 'status' => 'HTTP_ERROR', 'message' => 'UNKNOWN SERVER ERROR' }.freeze
 
     def post(horoshop:, url:, body:)
-      connection(horoshop).post(url, body)
-    rescue Faraday::Error => e
-      error_status = e.response[:status]
-      error_body = e.response&.dig(:body)
-      if error_status.between?(500, 599)
-        ERROR
-      else
-        { status: error_body['status'], message: error_body['response']['message'] }
-      end
+      connection(horoshop).post(url, body).body
+    rescue Faraday::Error
+      ERROR
     end
 
     def connection(horoshop)

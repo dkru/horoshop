@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-
+require 'pry'
 describe Horoshop::Authorization do
   subject { described_class.new(horoshop) }
 
-  let(:horoshop) { instance_double('Instance', login: 'user123', password: 'pass123', url: 'http://api.horosop.com') }
+  let(:horoshop) { Horoshop.new(login: 'user123', password: 'pass123', url: 'http://api.horosop.com') }
 
   before do
     allow(horoshop).to receive(:token=)
@@ -17,17 +17,14 @@ describe Horoshop::Authorization do
 
   describe '#authorize' do
     context 'when authorization is successful' do
-      let(:successful_response) do
-        {
-          body: { 'status' => 'OK', 'response' => { 'token' => '123qwe4' } }.to_json,
-          headers: { 'Content-Type' => 'application/json' }
-        }
-      end
-
       before do
         stub_request(:post, 'http://api.horosop.com/api/auth/')
           .with(body: { login: 'user123', password: 'pass123' })
-          .to_return(successful_response)
+          .to_return(
+            status: 200,
+            body: { 'status' => 'OK', 'response' => { 'token' => '123qwe4' } }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
       end
 
       it { expect(horoshop).to receive(:token=).with('123qwe4') }
@@ -39,8 +36,8 @@ describe Horoshop::Authorization do
         stub_request(:post, 'http://api.horosop.com/api/auth/')
           .with(body: { login: 'user123', password: 'pass123' })
           .to_return(
-            status: 200,
-            body: { 'status' => 'ERROR', 'response' => { 'message' => 'error message' } }.to_json
+            status: 500,
+            body: { 'status' => 'HTTP_ERROR', 'message' => 'UNKNOWN SERVER ERROR' }.to_json
           )
       end
 

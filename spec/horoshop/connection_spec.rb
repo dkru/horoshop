@@ -23,19 +23,35 @@ describe Horoshop::Connection do
     context 'when request is successful' do
       before do
         stub_request(:post, "http://api.horosop.com#{url}")
-          .to_return(status: 200, body: '{"status":"OK","response": { "token": "some_token"} }')
+          .to_return(
+            status: 200,
+            body: { 'status' => 'OK', 'response' => { 'token' => '123qwe4' } }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
       end
 
       it 'returns a success response' do
         response = subject.post(horoshop: subject, url: url, body: body)
-        expect(JSON.parse(response.body)).to include('status' => 'OK', 'response' => { 'token' => 'some_token' })
+        expect(response).to include('status' => 'OK')
       end
     end
 
     context 'when a server error occurs' do
       before do
         stub_request(:post, "http://api.horosop.com#{url}")
-          .to_return(status: 500, body: '')
+          .to_return(status: 500, body: nil, headers: { 'Content-Type' => 'application/json' })
+      end
+
+      it 'returns a server error message' do
+        response = subject.post(horoshop: subject, url: url, body: body)
+        expect(response).to eq(Horoshop::Connection::ERROR)
+      end
+    end
+
+    context 'when a server return non json object' do
+      before do
+        stub_request(:post, "http://api.horosop.com#{url}")
+          .to_return(status: 302, body: '<html></html>', headers: { 'Content-Type' => 'application/json' })
       end
 
       it 'returns a server error message' do

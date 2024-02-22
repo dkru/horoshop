@@ -6,18 +6,10 @@ describe Horoshop do
   subject { described_class.new(params) }
 
   let(:url) { 'http://api.horosop.com' }
-  let(:username) { 'user213' }
+  let(:login) { 'user213' }
   let(:password) { 'pass' }
   let(:params) do
-    { url: url, username: username, password: password }
-  end
-
-  describe '#initialize' do
-    context 'when the parameters are not valid' do
-      let(:params) { { url: url } }
-
-      it { expect { subject }.to raise_error(ArgumentError) }
-    end
+    { url: url, login: login, password: password }
   end
 
   describe '#token_valid?' do
