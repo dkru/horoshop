@@ -6,10 +6,10 @@ gem 'faraday'
 
 group :development do
   gem 'rubocop'
+  gem 'rubocop-rspec', require: false
 end
 
 group :test do
   gem 'rspec'
-  gem 'rubocop-rspec', require: false
   gem 'webmock'
 end
