@@ -37,7 +37,6 @@ describe Horoshop do
 
     context 'when token is nil' do
       before do
-        subject
         subject.token = nil
       end
 
