@@ -1,16 +1,26 @@
 # frozen_string_literal: true
 
+require_relative 'horoshop/authorization'
+
 # Base class used to store data about authentication
 class Horoshop
-  def initialize(url:, username:, password:)
+  attr_accessor :url, :login, :password, :token, :expiration_timestamp
+
+  def initialize(url:, login:, password:)
     @url = url
-    @username = username
+    @login = login
     @password = password
     @token = nil
     @expiration_timestamp = nil
   end
 
-  private
+  def token_valid?
+    return false if token.nil?
 
-  attr_reader :url, :username, :password, :token, :expiration_timestamp
+    expiration_timestamp < Time.now
+  end
+
+  def refresh_token!
+    Horoshop::Authorization.new(self).authorize
+  end
 end

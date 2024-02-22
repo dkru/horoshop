@@ -3,5 +3,13 @@
 source 'https://rubygems.org'
 
 gem 'faraday'
-gem 'rspec'
-gem 'rubocop'
+
+group :development do
+  gem 'rubocop'
+  gem 'rubocop-rspec', require: false
+end
+
+group :test do
+  gem 'rspec'
+  gem 'webmock'
+end
