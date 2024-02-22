@@ -1,10 +1,8 @@
 This is gem used for exchange data with horoshop.ua internet shop constructor
 
-##Basic usage
+Authorization usage, at first you must create instance of class Horoshop with valid params to connect
 
-    auth_instance = Horoshop.new(url: 'http://somesite.org', username: 'jhon', password: 'piterson')
+    horoshop = Horoshop.new(url: 'http://somesite.org', username: 'jhon', password: 'piterson')
+    Horoshop::Authotization.new(horoshop).authorize
 
-
-After that, you shuod just add variable auth to all you request.
-
-    Horoshop::SendBalances.post(auth: auth, data: SOME_LONG_JSON_DATA)
+After that you just use instance horoshop for all next requests.

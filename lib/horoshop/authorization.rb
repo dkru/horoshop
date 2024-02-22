@@ -22,7 +22,6 @@ class Horoshop
       response
     end
 
-
     private
 
     attr_reader :horoshop
