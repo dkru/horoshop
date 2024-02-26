@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Horoshop do
+describe Horoshop::Client do
   subject { described_class.new(params) }
 
   let(:url) { 'http://api.horosop.com' }

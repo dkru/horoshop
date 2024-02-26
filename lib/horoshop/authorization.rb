@@ -2,7 +2,7 @@
 
 require_relative 'connection'
 
-class Horoshop
+module Horoshop
   # Class for user authorization
   class Authorization
     include Connection

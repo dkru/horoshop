@@ -5,7 +5,9 @@ require 'pry'
 describe Horoshop::Authorization do
   subject { described_class.new(horoshop) }
 
-  let(:horoshop) { Horoshop.new(login: 'user123', password: 'pass123', url: 'http://api.horosop.com') }
+  let(:horoshop) do
+    Horoshop::Client.new(login: 'user123', password: 'pass123', url: 'http://api.horosop.com')
+  end
 
   before do
     allow(horoshop).to receive(:token=)
