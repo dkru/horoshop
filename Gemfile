@@ -10,6 +10,7 @@ group :development do
 end
 
 group :test do
+  gem 'pry'
   gem 'rspec'
   gem 'webmock'
 end

@@ -4,14 +4,9 @@ require_relative 'connection'
 
 module Horoshop
   # Class for user authorization
-  class Authorization
-    include Connection
+  class Authorization < ::Horoshop::Base
     AUTH_URL = '/api/auth/'
     EXPIRATION_TIME = 600
-
-    def initialize(horoshop)
-      @horoshop = horoshop
-    end
 
     def authorize
       response = post(horoshop: horoshop, url: AUTH_URL, body: body)
