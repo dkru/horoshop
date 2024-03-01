@@ -4,7 +4,7 @@ require 'faraday'
 module Horoshop
   # Module for check connection
   module Connection
-    ERROR = { 'status' => 'HTTP_ERROR', 'message' => 'UNKNOWN SERVER ERROR' }.freeze
+    ERROR = { 'status' => 'HTTP_ERROR', 'response' => { 'message' => 'UNKNOWN SERVER ERROR' } }.freeze
 
     def post(horoshop:, url:, body:, add_token: false)
       mixin_token!(horoshop, body) if add_token

@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'horoshop'
-  s.version     = '0.2.0'
+  s.version     = '0.2.2'
   s.summary     = 'Horoshop API interface'
   s.description = 'Gem for exchangedata with the internet shop constructor'
   s.authors     = ['Denys Krupenov', 'Illiya Bordun']
@@ -16,4 +16,5 @@ Gem::Specification.new do |s|
   s.metadata = {
     'rubygems_mfa_required' => 'true'
   }
+  s.add_dependency 'faraday', '>= 2.8'
 end
