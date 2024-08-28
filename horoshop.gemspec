@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'horoshop'
-  s.version     = '0.2.4'
+  s.version     = '0.2.5'
   s.summary     = 'Horoshop API interface'
   s.description = 'Gem for exchangedata with the internet shop constructor'
   s.authors     = ['Denys Krupenov', 'Illiya Bordun']
